@@ -11,7 +11,7 @@ class Client(models.Model):
 class Order(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
-    name = models.FilePathField()
+    name = models.CharField(max_length=255)
     volume_mm3 = models.FloatField()
     price_usd = models.FloatField()
 
