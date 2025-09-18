@@ -7,7 +7,7 @@
 <body>
 <ul>
 {% for client in clients %}
-    <li><a href="{% url 'stats' client.pk %}/"> To your stats {{client.name}} </a></li>
+    <li><a href="{% url 'stats' client.pk %}"> To your stats {{ client.name }} </a></li>
 {% endfor %}
 </ul>
 </body>
