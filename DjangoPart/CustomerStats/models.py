@@ -17,7 +17,7 @@ class Order(models.Model):
     delivery_type = models.ForeignKey(DeliveryType, on_delete=models.PROTECT, null=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
-    name = models.CharField(max_length=255)
+    video_path = models.CharField(max_length=255)
     volume_mm3 = models.FloatField()
     price_usd = models.FloatField()
 
