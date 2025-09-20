@@ -19,3 +19,8 @@ class OrderFilterForm(forms.Form):
             }
         )
     )
+
+    min_volume = forms.FloatField(required=False, label="Мінімальний обʼєм (мм³)")
+    max_volume = forms.FloatField(required=False, label="Максимальний обʼєм (мм³)")
+    min_price = forms.FloatField(required=False, label="Мінімальна ціна (USD)")
+    max_price = forms.FloatField(required=False, label="Максимальна ціна (USD)")

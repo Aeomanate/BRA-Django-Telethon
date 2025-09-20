@@ -55,6 +55,16 @@ def user_stats(request, client_id):
             orders = orders.filter(time__date__gte=form.cleaned_data['start_date'])
         if form.cleaned_data['end_date']:
             orders = orders.filter(time__date__lte=form.cleaned_data['end_date'])
+        if form.cleaned_data['min_volume'] is not None:
+            orders = orders.filter(volume_mm3__gte=form.cleaned_data['min_volume'])
+        if form.cleaned_data['max_volume'] is not None:
+            orders = orders.filter(volume_mm3__lte=form.cleaned_data['max_volume'])
+
+        # фільтр по ціні
+        if form.cleaned_data['min_price'] is not None:
+            orders = orders.filter(price_usd__gte=form.cleaned_data['min_price'])
+        if form.cleaned_data['max_price'] is not None:
+            orders = orders.filter(price_usd__lte=form.cleaned_data['max_price'])
 
     usd_to_uah = get_usd_to_uah_rate()
 
