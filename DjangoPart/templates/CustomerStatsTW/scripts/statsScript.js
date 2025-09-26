@@ -1,4 +1,6 @@
-const formBlock = document.querySelector('#formBlock');
+const formBlock = document.getElementById('formBlock');
+const mobileMenu = document.getElementById('mobileMenu');
+const mobileMenuBg = document.getElementById('mobileMenuBg');
 
 function toggleVisibility() {
     if (formBlock.classList.contains('hidden')) {
@@ -7,6 +9,22 @@ function toggleVisibility() {
     } else {
         formBlock.classList.remove('block');
         formBlock.classList.add('hidden');
+    }
+}
+
+function toggleMobMenuVisibility() {
+    if (mobileMenu.classList.contains("translate-x-full")) {
+        mobileMenuBg.classList.remove("opacity-0", "invisible");
+        mobileMenuBg.classList.add("opacity-100", "visible");
+
+        mobileMenu.classList.remove("translate-x-full");
+        mobileMenu.classList.add("translate-x-0");
+    } else {
+        mobileMenuBg.classList.remove("opacity-100", "visible");
+        mobileMenuBg.classList.add("opacity-0", "invisible");
+
+        mobileMenu.classList.remove("translate-x-0");
+        mobileMenu.classList.add("translate-x-full");
     }
 }
 
