@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'CustomerStats.apps.CustomerstatsConfig',
-    'django_browser_reload'
+    'django_browser_reload',
+    'Auth.apps.AuthConfig',
 ]
 
 MIDDLEWARE = [
