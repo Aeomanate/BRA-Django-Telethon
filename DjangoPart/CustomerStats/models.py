@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class DeliveryType(models.Model):
     delivery_type = models.CharField(max_length=100)
@@ -9,6 +10,7 @@ class DeliveryType(models.Model):
 class Client(models.Model):
     delivery_type = models.ForeignKey(DeliveryType, on_delete=models.PROTECT, null=True)
     name = models.CharField(max_length=100)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null = True, blank = True, related_name='client')
 
     def __str__(self):
         return self.name
