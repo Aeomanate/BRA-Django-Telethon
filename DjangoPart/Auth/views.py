@@ -56,3 +56,7 @@ class Register(CreateView):
 class MyLogoutView(LogoutView):
     template_name = "registration/logout.html"
     next_page = "Auth:login"
+
+    def get(self, request, *args, **kwargs):
+        # Allow logout via GET (useful for link-based logout); delegate to post() which performs the logout/redirect
+        return self.post(request, *args, **kwargs)
