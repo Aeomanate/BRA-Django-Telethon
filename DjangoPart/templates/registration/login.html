@@ -1,0 +1,57 @@
+{% extends "CustomerStatsTW/base.html" %}
+{% block title %}Login{% endblock %}
+{% block PageName %}Вхід на сайт{% endblock %}
+{% block content %}
+
+<div class="max-w-md mx-auto mt-12 p-6 bg-gray-800/80 rounded-lg shadow-lg">
+  <h2 class="text-2xl font-semibold mb-4">Увійти в акаунт</h2>
+
+  {% if form.errors %}
+    <div class="mb-4 p-3 bg-red-900/60 text-red-200 rounded">
+      Будь ласка, перевірте поля форми.
+    </div>
+  {% endif %}
+
+  <form method="post" action="{% url 'Auth:login' %}" class="space-y-4">
+    {% csrf_token %}
+
+    <div>
+      <label for="id_username" class="block text-sm font-medium mb-1">Email</label>
+      <input id="id_username" name="username" type="email" required
+             class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+             placeholder="you@example.com" />
+    </div>
+
+    <div>
+      <label for="id_password" class="block text-sm font-medium mb-1">Пароль</label>
+      <input id="id_password" name="password" type="password" required
+             class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+             placeholder="••••••••" />
+    </div>
+
+    <div class="flex items-center justify-between text-sm">
+      <label class="flex items-center gap-2">
+        <input type="checkbox" name="remember" class="h-4 w-4 rounded bg-gray-700 border-gray-600" />
+        Запам'ятати мене
+      </label>
+    </div>
+
+    <button type="submit" class="w-full btn-style text-white font-medium">Увійти</button>
+  </form>
+
+  <div class="mt-6 text-center text-sm text-gray-400">
+    Немає акаунту?
+    <a href=" " class="text-blue-400 hover:underline">Зареєструватися</a>
+  </div>
+
+  <!-- опціонально: соц. логін -->
+  <div class="mt-6 border-t border-gray-700 pt-4 text-center">
+    <p class="text-xs text-gray-400 mb-3">Або увійти через</p>
+    <div class="flex gap-3 justify-center">
+      <a href="" class="px-4 py-2 rounded bg-white/6 hover:bg-white/10">Google</a>
+      <a href="" class="px-4 py-2 rounded bg-white/6 hover:bg-white/10">GitHub</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
