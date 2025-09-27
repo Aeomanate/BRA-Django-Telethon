@@ -24,6 +24,9 @@
       .btn-style {
         @apply px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-500 rounded cursor-pointer;
       }
+      .link-style {
+        @apply hover:text-blue-700 hover:underline hover:underline-offset-1 active:bg-blue-500 rounded cursor-pointer;
+      }
     </style>
 </head>
 <body class="w-full p-4 text-white font-roboto bg-gray-900">
@@ -37,7 +40,15 @@
     {% include "CustomerStatsTW/components/mobileMenu.html" %}
 
     <main class="w-full">
-        {% block content %}{% endblock %}
+        {% url 'Auth:login' as login_url %}
+        {% url 'Auth:register' as register_url %}
+        {% url 'Auth:logout' as logout_url %}
+        <p>Користувач: {{user}}</p>
+        {% if user.is_authenticated or request.path == login_url or request.path == register_url or request.path == logout_url%}
+            {% block content %} {% endblock %}
+        {% else %}
+            <p>Маєте <a class="link-style" href="{{login_url}}">залогінитись</a></p>
+        {% endif %}
     </main>
 <script src="{% static 'statsScript.js' %}" defer></script>
 </body>
