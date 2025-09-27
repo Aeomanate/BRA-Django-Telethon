@@ -1,12 +1,11 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     {% load static %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,30 +14,58 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <style type="text/tailwindcss">
-      @theme {
-        --font-roboto: "Roboto", sans-serif;
-      }
-      .table-col {
-        @apply w-1/8 flex justify-center items-center;
-      }
-      .btn-style {
-        @apply px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-500 rounded cursor-pointer;
-      }
+        @layer base {
+            :root {
+                --font-roboto: "Roboto", sans-serif;
+            }
+        }
+
+        .table-col {
+            @apply w-1/8 flex justify-center items-center;
+        }
+
+        .btn-style {
+            @apply px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-500 rounded cursor-pointer;
+        }
+
+        .table-col {
+            @apply w-1/8 flex justify-center items-center;
+        }
+
+        .btn-style {
+            @apply px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-500 rounded cursor-pointer;
+        }
+
+        .a-style {
+            @apply font-bold underline text-blue-400 hover:text-blue-300 transition hover:text-blue-500 duration-300;
+        }
     </style>
 </head>
-<body class="w-full p-4 text-white font-roboto bg-gray-900">
-    <header class="w-full flex justify-between items-center p-4 bg-gray-800 rounded-lg">
-        <h1 class="w-6/12 sm:w-4/12 text-md sm:text-xl font-bold leading-none flex items-center">{% block PageName %}{% endblock %}</h1>
-        <div class="hidden sm:block sm:mt-1 sm:w-4/12">
-            {% include "CustomerStatsTW/components/navbar.html" %}
-        </div>
-        {% include "CustomerStatsTW/components/loginBtn.html" %}
-    </header>
-    {% include "CustomerStatsTW/components/mobileMenu.html" %}
 
-    <main class="w-full">
-        {% block content %}{% endblock %}
-    </main>
+<body class="w-full p-4 text-white font-roboto bg-gray-900">
+
+<header class="w-full flex justify-between items-center p-4 bg-gray-800 rounded-lg">
+    <h1 class="w-6/12 sm:w-4/12 text-md sm:text-xl font-bold leading-none flex items-center">{% block PageName %}{% endblock %}</h1>
+    <div class="hidden sm:block sm:mt-1 sm:w-4/12">
+        {% include "CustomerStatsTW/components/navbar.html" %}
+    </div>
+    {% include "CustomerStatsTW/components/loginBtn.html" %}
+</header>
+{% include "CustomerStatsTW/components/mobileMenu.html" %}
+
+<main class="w-full">
+    {% if user.is_authenticated or request.path in '/auth/signin,/auth/signup,/auth/logout' %}
+    <p>Is auth: {{ user.is_authenticated }}, username: "{{ user.username }}" </p>
+    {% block content %}{% endblock %}
+    {% else %}
+    <div class = "w-full h-3/12 flex justify-center items-center">
+        <p>You must <a href="{% url 'Auth:signin' %}" class="a-style">sign in</a> to view the page</p>
+    </div>
+
+    {% endif %}
+</main>
+
 <script src="{% static 'statsScript.js' %}" defer></script>
+
 </body>
 </html>

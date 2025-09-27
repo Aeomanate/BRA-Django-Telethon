@@ -2,12 +2,14 @@ from django.urls import path, include
 
 from Auth import views
 
-app_name = 'auth'
+app_name = 'Auth'
 
 urlpatterns = [
-    path('home', views.HomeView.as_view(), name='home'),
+    path('profile/<int:pk>', views.HomeView.as_view(), name='profile'),
 
-    path('', views.MyLoginView.as_view(), name='login'),
+    path('signin', views.Signin.as_view(), name='signin'),
 
-    path('reg', views.RegisterView.as_view(), name='register')
+    path('signup', views.Signup.as_view(), name='signup'),
+
+    path('logout', views.MyLogoutView.as_view(), name='logout')
 ]
