@@ -56,7 +56,7 @@
 <main class="w-full">
     {% with p=request.path %}
         <p>Is auth: {{ user.is_authenticated }}, user: "{{ user }}", client: "{{ client }}" </p>
-        {% if user.is_authenticated or p == '/auth/login' or p == '/auth/register' or p == '/auth/logout' %}
+        {% if user.is_authenticated or p == '/auth/login/' or p == '/auth/register/' or p == '/auth/logout/' %}
             {% block content %}{% endblock %}
         {% else %}
             <div class="w-full h-3/12 flex justify-center items-center">
