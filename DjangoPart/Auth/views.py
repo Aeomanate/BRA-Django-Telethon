@@ -1,4 +1,5 @@
 from django.contrib.auth.views import LoginView, LogoutView
+from django.shortcuts import render
 from django.views import View
 from django.views.generic import CreateView
 from django.contrib.auth.forms import UserCreationForm
@@ -7,27 +8,35 @@ from django.contrib.auth import login
 from django.conf import settings
 
 
-class Signin(LoginView):
-    template_name = "registration/signin.html"
-    next_page = "/"
+class Login(LoginView):
+    template_name = "registration/login.html"
 
     def get_success_url(self):
-        # Redirect to the CustomerStats stats page for the user's client
+        # Redirect to the user's profile after successful sign-in
+        return reverse('Auth:profile')
+
+
+class ProfileView(View):
+    template_name = "CustomerStatsTW/profile.html"
+
+    def get(self, request):
+        # Provide the logged-in user and their Client (if any) to the template context
         from CustomerStats.models import Client
-        user = self.request.user
-        client = Client.objects.filter(user=user).first()
-        if client:
-            return reverse('stats:stats', kwargs={'client_id': client.id})
-        # Fallback if no client is linked to this user
-        return reverse('index')
+
+        user = request.user
+        client = None
+        if user.is_authenticated:
+            client = Client.objects.filter(user=user).first()
+
+        context = {
+            'user': user,
+            'client': client,
+        }
+        return render(request, self.template_name, context)
 
 
-class HomeView(View):
-    template_name = "registration/profile.html"
-
-
-class Signup(CreateView):
-    template_name = "registration/signup.html"
+class Register(CreateView):
+    template_name = "registration/register.html"
     form_class = UserCreationForm
     success_url = reverse_lazy('index')
 
@@ -35,18 +44,15 @@ class Signup(CreateView):
         response = super().form_valid(form)
         login(self.request, form.instance)
         # Ensure the new user has an associated Client record
-        try:
-            from CustomerStats.models import Client
-            Client.objects.get_or_create(user=form.instance, defaults={'name': form.instance.username})
-        except Exception:
-            # Avoid breaking signup on any unexpected error
-            pass
+        from CustomerStats.models import Client
+        Client.objects.get_or_create(user=form.instance, defaults={'name': form.instance.username})
         return response
 
     def get_success_url(self):
-        return reverse_lazy('CustomerStats:index')
+        # After registration, redirect to profile page using the logged-in user from the request context
+        return reverse('Auth:profile')
 
 
 class MyLogoutView(LogoutView):
     template_name = "registration/logout.html"
-    next_page = "Auth:signin"
+    next_page = "Auth:login"

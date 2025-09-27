@@ -14,7 +14,7 @@ def get_client_orders(client_id: int):
         "Order": [
             {
                 "delivery_type": order.delivery_type.delivery_type if order.delivery_type else None,
-                "name": order.name,
+                "video_path": order.video_path,
             }
             for order in orders
         ]

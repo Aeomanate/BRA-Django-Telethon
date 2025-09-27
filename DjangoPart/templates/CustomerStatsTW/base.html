@@ -54,15 +54,16 @@
 {% include "CustomerStatsTW/components/mobileMenu.html" %}
 
 <main class="w-full">
-    {% if user.is_authenticated or request.path in '/auth/signin,/auth/signup,/auth/logout' %}
-    <p>Is auth: {{ user.is_authenticated }}, username: "{{ user.username }}" </p>
-    {% block content %}{% endblock %}
-    {% else %}
-    <div class = "w-full h-3/12 flex justify-center items-center">
-        <p>You must <a href="{% url 'Auth:signin' %}" class="a-style">sign in</a> to view the page</p>
-    </div>
-
-    {% endif %}
+    {% with p=request.path %}
+        <p>Is auth: {{ user.is_authenticated }}, user: "{{ user }}", client: "{{ client }}" </p>
+        {% if user.is_authenticated or p == '/auth/login' or p == '/auth/register' or p == '/auth/logout' %}
+            {% block content %}{% endblock %}
+        {% else %}
+            <div class="w-full h-3/12 flex justify-center items-center">
+                <p>You must <a href="{% url 'Auth:login' %}" class="a-style">sign in</a> to view the page</p>
+            </div>
+        {% endif %}
+    {% endwith %}
 </main>
 
 <script src="{% static 'statsScript.js' %}" defer></script>
