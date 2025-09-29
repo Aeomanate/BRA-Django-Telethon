@@ -34,7 +34,7 @@
 <body class="w-full p-4 text-white font-roboto bg-gray-900">
     <header class="w-full flex justify-between items-center p-4 bg-gray-800 rounded-lg">
         <h1 class="w-6/12 sm:w-4/12 text-md sm:text-xl font-bold leading-none flex items-center">
-            {% if user.is_authenticated %}
+            {% if is_user_authenticated %}
               {% block PageName %}{% endblock %}
             {% else %}
               {% if request.path == login_url %}

@@ -1,4 +1,5 @@
 import requests
+from asgiref.sync import sync_to_async
 from django.db.models import QuerySet, Sum
 
 
@@ -16,18 +17,22 @@ def get_usd_to_uah_rate() -> float:
     return 42.0
 
 
-def calculate_totals(orders: QuerySet, usd_to_uah: float):
-    total_orders = orders.count()
-    total_volume = orders.aggregate(Sum("volume_mm3"))["volume_mm3__sum"] or 0
-    total_usd = orders.aggregate(Sum("price_usd"))["price_usd__sum"] or 0
-    total_uah = total_usd * usd_to_uah
+async def calculate_totals(orders: QuerySet, usd_to_uah: float):
+        total_orders = await sync_to_async(lambda: orders.count())()
+        total_volume = await sync_to_async(lambda: orders.aggregate(Sum("volume_mm3"))["volume_mm3__sum"] or 0)()
+        total_usd = await sync_to_async(lambda: orders.aggregate(Sum("price_usd"))["price_usd__sum"] or 0)()
+        total_uah = total_usd * usd_to_uah
 
-    for o in orders:
-        o.price_uah = o.price_usd * usd_to_uah
+        @sync_to_async
+        def loop_order():
+            for o in orders:
+                o.price_uah = o.price_usd * usd_to_uah
 
-    return {
-        "total_orders": total_orders,
-        "total_volume": total_volume,
-        "total_usd": total_usd,
-        "total_uah": round(total_uah, 2),
-    }
+        await loop_order()
+
+        return {
+            "total_orders": total_orders,
+            "total_volume": total_volume,
+            "total_usd": total_usd,
+            "total_uah": round(total_uah, 2),
+        }
