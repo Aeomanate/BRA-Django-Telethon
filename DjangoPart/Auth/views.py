@@ -18,22 +18,19 @@ from MyDjangoBot.settings import BASE_DIR
 
 
 def get_client_model():
-    # Use the app label (as defined by AppConfig.label, commonly the package name)
     return apps.get_model('CustomerStats', 'Client')
 
 
-# Create your views here.
 class MyLoginView(LoginView):
     template_name = 'CustomerStatsTW/components/authForms/login.html'
     authentication_form = CustomLoginForm
     def get_success_url(self):
-        # Redirect to the user's profile after successful sign-in
         return reverse('Auth:profile')
 
 
 class RegisterView(CreateView):
     template_name = 'CustomerStatsTW/components/authForms/registration.html'
-    form_class = CustomRegisterForm   # ось тут замість UserCreationForm
+    form_class = CustomRegisterForm
     success_url = reverse_lazy('profile')
 
     def form_valid(self, form):
@@ -52,29 +49,30 @@ class ProfileView(View):
     template_name = "CustomerStatsTW/components/userPage/profile.html"
 
     async def get_context_data(self, request, upload_file_form=None):
-        """Хелпер для формування контексту (щоб не дублювати код)."""
-        user = request.user
+        user = await sync_to_async(lambda: request.user, thread_sensitive=True)()
 
         client = None
-        if user.is_authenticated:
+        if await sync_to_async(lambda: user.is_authenticated, thread_sensitive=True)():
             client = await sync_to_async(
-                lambda: get_client_model().objects.filter(user=user).first()
+                lambda: get_client_model().objects.filter(user=user).first(),
+                thread_sensitive=True
             )()
 
-        usd_to_uah = get_usd_to_uah_rate()
+        usd_to_uah = await sync_to_async(get_usd_to_uah_rate)()
 
-        # orders = client.order_set.all() → через sync_to_async
-        orders = []
+        totals, form, query, has_filters = {}, None, "", False
         if client:
-            orders = await sync_to_async(lambda: client.order_set.all())()
+            orders_qs = get_client_model().objects.none()
+            orders_qs = client.order_set.all()
 
-        totals = await calculate_totals(orders, usd_to_uah)
+            orders, form, query, has_filters = await sync_to_async(
+                lambda: filter_orders(request, orders_qs)
+            )()
 
-        orders, form, query, has_filters = filter_orders(request, orders)
+            totals = await calculate_totals(orders, usd_to_uah)
 
         context = {
             "greeting": "Вітаємо,",
-            "is_user_authenticated": user.is_authenticated,
             "user": user,
             "client": client,
             "uploadFileForm": upload_file_form or UploadFileForm(),
@@ -94,22 +92,21 @@ class ProfileView(View):
     async def post(self, request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            title = form.cleaned_data["title"]
             file = form.cleaned_data["file"]
 
             save_dir = BASE_DIR.parent / "common_data" / "models"
-            await sync_to_async(save_dir.mkdir)(parents=True, exist_ok=True)
-
+            save_dir.mkdir(parents=True, exist_ok=True)
             file_path = save_dir / file.name
 
-            # асинхронне збереження файлу
-            async with await sync_to_async(open)(file_path, "wb+") as destination:
-                for chunk in file.chunks():
-                    await sync_to_async(destination.write)(chunk)
+            def _save_file():
+                with open(file_path, "wb+") as destination:
+                    for chunk in file.chunks():
+                        destination.write(chunk)
+
+            await sync_to_async(_save_file, thread_sensitive=True)()
 
             return redirect("profile")
 
-        # якщо форма не валідна — формуємо контекст з помилками
         context = await self.get_context_data(request, upload_file_form=form)
         return await sync_to_async(
             lambda: render(request, self.template_name, context)
