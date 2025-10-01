@@ -12,12 +12,15 @@
                 {% endif %}
             </div>
         </div>
-        <ul class="w-1/2 p-4 bg-gray-800 rounded-lg">
-            <li>Кількість замовлених об’єктів: <strong>{{ total_orders }}</strong></li>
-            <li>Загальний об’єм усіх замовлень: <strong>{{ total_volume }}</strong></li>
-            <li>Курс USD → UAH: <strong>{{ usd_to_uah|floatformat:2 }}</strong></li>
-            <li>Загальна ціна USD: <strong>{{ total_usd }} $</strong></li>
-            <li>Загальна ціна UAH: <strong>{{ total_uah }} ₴</strong></li>
-        </ul>
+        <div class="w-1/2 p-4 bg-gray-800 rounded-lg flex items-center">
+            <ul class="w-1/2">
+                <li>Кількість замовлених об’єктів: <strong>{{ total_orders }}</strong></li>
+                <li>Загальний об’єм усіх замовлень: <strong>{{ total_volume }}</strong></li>
+                <li>Курс USD → UAH: <strong>{{ usd_to_uah|floatformat:2 }}</strong></li>
+                <li>Загальна ціна USD: <strong>{{ total_usd }} $</strong></li>
+                <li>Загальна ціна UAH: <strong>{{ total_uah }} ₴</strong></li>
+            </ul>
+            {% include "CustomerStatsTW/components/global/uploadBtn.html" %}
+        </div>
     </div>
 </div>

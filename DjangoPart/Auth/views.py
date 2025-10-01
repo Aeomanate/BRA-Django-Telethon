@@ -7,7 +7,7 @@ from django.views.generic import CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import login
-
+import aiofiles
 from django.apps import apps
 
 from .forms import CustomLoginForm, CustomRegisterForm, UploadFileForm
@@ -93,19 +93,16 @@ class ProfileView(View):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.cleaned_data["file"]
-
+            filename = file.name
             save_dir = BASE_DIR.parent / "common_data" / "models"
             save_dir.mkdir(parents=True, exist_ok=True)
             file_path = save_dir / file.name
 
-            def _save_file():
-                with open(file_path, "wb+") as destination:
-                    for chunk in file.chunks():
-                        destination.write(chunk)
+            async with aiofiles.open(file_path, "wb+") as destination:
+                for chunk in file.chunks():
+                    await destination.write(chunk)
 
-            await sync_to_async(_save_file, thread_sensitive=True)()
-
-            return redirect("profile")
+            return redirect("Auth:profile")
 
         context = await self.get_context_data(request, upload_file_form=form)
         return await sync_to_async(
