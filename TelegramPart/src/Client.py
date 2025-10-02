@@ -1,4 +1,6 @@
 import os
+import aiohttp
+import asyncio
 
 import telethon
 from telethon import events, TelegramClient
@@ -11,6 +13,35 @@ from .Downloader import get_extension, FileDownloaderFromMessage, get_bare_filen
 from VisModel.HandlerModel import HandlerModel
 
 dprint = DPrint('BOT')
+SERVER_URL = "http://localhost:8080"
+
+async def render_via_server(obj_path: str) -> str:
+    async with aiohttp.ClientSession() as session:
+        # 1) отправляем рендер
+        async with session.post(f"{SERVER_URL}/render", json={"obj_path": obj_path}) as resp:
+            data = await resp.json()
+            job_id = data["job_id"]
+
+        # 2) ждём готовности
+        while True:
+            await asyncio.sleep(2)
+            async with session.get(f"{SERVER_URL}/status/{job_id}") as resp:
+                status_data = await resp.json()
+                if status_data["status"] == "finished":
+                    break
+                if status_data["status"] == "failed":
+                    raise RuntimeError(status_data.get("error"))
+
+        # 3) скачиваем mp4
+        async with session.get(f"{SERVER_URL}/result/{job_id}") as resp:
+            if resp.status != 200:
+                raise RuntimeError(f"Failed to download result: {resp.status}")
+            filename = obj_path.split("/")[-1].split(".")[0]
+            out_path = f"./Videos/{filename+'_'+job_id}.mp4"
+            os.makedirs("./Videos", exist_ok=True)
+            with open(out_path, "wb") as f:
+                f.write(await resp.read())
+        return out_path
 
 class Client(telethon.TelegramClient):
     def __init__(self, config: ConfigApi):
@@ -41,7 +72,7 @@ class Client(telethon.TelegramClient):
 
 class Logic:
     def __init__(self):
-        self.client = Client(ConfigApi('./src/Config/credentials.json'))
+        self.client = Client(ConfigApi('TelegramPart/src/Config/credentials.json'))
         self.client.add_event_handler(self.model_message_handler)
         self.client.add_event_handler(self.button_handler)
         self.client.add_event_handler(self.inline_button_handler)
@@ -85,11 +116,8 @@ class Logic:
         await file_downloader.init()
         full_file_name = await file_downloader.run()
 
-        file_vis = self.convert(full_file_name)
-
-        await self.client.send_file(who, file=file_vis)
-
-
+        video_path = await render_via_server(full_file_name)
+        await self.client.send_file(who, file=video_path)
 
     @events.register(events.NewMessage(incoming=True, pattern='^/start$'))
     async def message_handler(self, event: telethon.events.NewMessage.Event):

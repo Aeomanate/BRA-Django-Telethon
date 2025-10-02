@@ -1,3 +1,4 @@
+import io
 import pickle
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
@@ -6,18 +7,18 @@ import pyvista
 import vtkmodules.util.pickle_support  # For pickle vtkPolyData
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 
-from DebugPrinter import DPrint
-from MeshBuilderVTK import MeshBuilderVTK
-from RenderPyVista import Visualizer
+from VisModel.DebugPrinter import DPrint
+from VisModel.MeshBuilderVTK import MeshBuilderVTK
+from VisModel.RenderPyVista import Visualizer
 
-from ProcessedModel import ProcessedModel
+from VisModel.ProcessedModel import ProcessedModel
 
 
 @dataclass
 class ProcessedModel:
     filename: str = ''
     volume_mm3: float = 0.0
-    image = None
+    image: io.BytesIO | None = None
 
 
 def build(full_filename):
@@ -64,4 +65,4 @@ class HandlerModel:
         self._build()
         self._visualize()
 
-        return (self.full_filename, self.pyvista_mesh.volume, self.image) if self.pyvista_mesh.n_points > 0 else None
+        return ProcessedModel(self.full_filename, self.pyvista_mesh.volume, self.image) if self.pyvista_mesh.n_points > 0 else None
