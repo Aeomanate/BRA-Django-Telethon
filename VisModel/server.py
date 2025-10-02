@@ -23,9 +23,9 @@ from RenderPyVista import Visualizer
 logging.basicConfig(level=logging.INFO)
 
 # Where to store final videos
-VIDEOS_DIR = pathlib.Path("../common_data/video")
+VIDEOS_DIR = pathlib.Path("common_data/video")
 VIDEOS_DIR.mkdir(exist_ok=True)
-MODELS_DIR = pathlib.Path("../common_data/models")
+MODELS_DIR = pathlib.Path("common_data/models")
 
 # CPU-bound rendering is offloaded to processes to avoid blocking the event loop
 executor = ProcessPoolExecutor(max_workers=os.cpu_count())
