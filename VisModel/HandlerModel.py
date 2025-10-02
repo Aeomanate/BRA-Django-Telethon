@@ -1,4 +1,5 @@
 import io
+
 import pickle
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
@@ -7,11 +8,11 @@ import pyvista
 import vtkmodules.util.pickle_support  # For pickle vtkPolyData
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 
-from VisModel.DebugPrinter import DPrint
-from VisModel.MeshBuilderVTK import MeshBuilderVTK
-from VisModel.RenderPyVista import Visualizer
+from DebugPrinter import DPrint
+from MeshBuilderVTK import MeshBuilderVTK
+from RenderPyVista import Visualizer
 
-from VisModel.ProcessedModel import ProcessedModel
+from ProcessedModel import ProcessedModel
 
 
 @dataclass

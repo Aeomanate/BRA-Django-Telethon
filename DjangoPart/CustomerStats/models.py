@@ -21,6 +21,7 @@ class ExecutionType(models.Model):
 
 class Order(models.Model):
     delivery_type = models.ForeignKey(DeliveryType, on_delete=models.PROTECT, null=True)
+    execution_type = models.ForeignKey(ExecutionType, on_delete=models.PROTECT, null=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
     video_path = models.CharField(max_length=255)
