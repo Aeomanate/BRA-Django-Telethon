@@ -1,3 +1,5 @@
+import io
+
 import pickle
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
@@ -17,7 +19,7 @@ from ProcessedModel import ProcessedModel
 class ProcessedModel:
     filename: str = ''
     volume_mm3: float = 0.0
-    image = None
+    image: io.BytesIO | None = None
 
 
 def build(full_filename):
@@ -64,4 +66,4 @@ class HandlerModel:
         self._build()
         self._visualize()
 
-        return (self.full_filename, self.pyvista_mesh.volume, self.image) if self.pyvista_mesh.n_points > 0 else None
+        return ProcessedModel(self.full_filename, self.pyvista_mesh.volume, self.image) if self.pyvista_mesh.n_points > 0 else None
