@@ -1,3 +1,4 @@
+import aiohttp
 from asgiref.sync import async_to_sync, sync_to_async
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect, aget_object_or_404
@@ -6,7 +7,6 @@ from django.views.generic import TemplateView
 from .models import Client, Order
 from .filtrations import filter_orders
 from .exchange_rates import get_usd_to_uah_rate, calculate_totals
-
 
 def index(request):
     return render(request, 'CustomerStatsTW/components/AdminPage/index.html', {
@@ -50,6 +50,21 @@ async def delete_order(request, pk):
     )()
 
     return redirect(request.META.get("HTTP_REFERER", "customer-stats"))
+
+async def create_video(path):
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.post('http://localhost:8080/render', json={'obj_path': path}) as response:
+                response.raise_for_status()
+                data = await response.json()
+                job_id = data.get('job_id')
+                print(f"Render job submitted successfully. Job ID: {job_id}")
+                # Here you would typically save the job_id to the Order model
+                return job_id
+        except aiohttp.ClientError as e:
+            print(f"Error submitting render job: {e}")
+            return None
+
 
 class About(TemplateView):
     template_name = 'CustomerStatsTW/components/aboutUsPage/about.html'

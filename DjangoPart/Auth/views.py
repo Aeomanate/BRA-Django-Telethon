@@ -13,7 +13,7 @@ from django.apps import apps
 from .forms import CustomLoginForm, CustomRegisterForm, UploadFileForm
 from CustomerStats.exchange_rates import get_usd_to_uah_rate, calculate_totals
 from CustomerStats.filtrations import filter_orders
-
+from CustomerStats.views import create_video
 from MyDjangoBot.settings import BASE_DIR
 
 
@@ -101,7 +101,8 @@ class ProfileView(View):
             async with aiofiles.open(file_path, "wb+") as destination:
                 for chunk in file.chunks():
                     await destination.write(chunk)
-
+            await create_video(str(file_path))
+#            await sync_to_async(lambda: request.user.client.order_set.create(video_path='video/Test_1.mp4'))()
             return redirect("Auth:profile")
 
         context = await self.get_context_data(request, upload_file_form=form)
