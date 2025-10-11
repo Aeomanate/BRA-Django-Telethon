@@ -5,8 +5,8 @@ from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 
 import pyvista
-import vtkmodules.util.pickle_support  # For pickle vtkPolyData
-from vtkmodules.vtkCommonDataModel import vtkPolyData
+# import vtkmodules.util.pickle_support  # For pickle vtkPolyData
+# from vtkmodules.vtkCommonDataModel import vtkPolyData
 
 from Utils.DebugPrinter import DPrint
 from MeshBuilderVTK import MeshBuilderVTK
@@ -23,7 +23,7 @@ class ProcessedModel:
 
 
 def build(full_filename):
-    mesh: vtkPolyData = MeshBuilderVTK(full_filename).build_mesh()
+    mesh = MeshBuilderVTK(full_filename).build_mesh()
     return mesh
 
 

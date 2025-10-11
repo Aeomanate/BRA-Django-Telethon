@@ -4,7 +4,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 import psutil
 
-from DebugPrinter import DPrint
+from Utils.DebugPrinter import DPrint
 from HandlerModel import HandlerModel
 
 def main():

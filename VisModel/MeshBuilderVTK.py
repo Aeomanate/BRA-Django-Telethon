@@ -1,4 +1,4 @@
-import vtk
+# import vtk
 
 
 class MeshBuilderVTK:
@@ -6,10 +6,10 @@ class MeshBuilderVTK:
         self.model_full_filename = model_full_filename
 
         ext = model_full_filename.split('.')[-1]
-        self.mesh_reader = vtk.vtkSTLReader if ext == 'stl' else vtk.vtkOBJReader
+        self.mesh_reader = None # vtk.vtkSTLReader if ext == 'stl' else vtk.vtkOBJReader
 
     def build_mesh(self):
-        vtk.vtkAlgorithmOutput().SetGlobalWarningDisplay(False)
+        # vtk.vtkAlgorithmOutput().SetGlobalWarningDisplay(False)
 
         reader = self.mesh_reader()
         reader.SetFileName(self.model_full_filename)
