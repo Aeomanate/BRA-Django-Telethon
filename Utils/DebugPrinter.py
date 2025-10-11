@@ -1,7 +1,7 @@
 import colorama
 from colorama import Fore, Style
 
-from TelegramPart.src.Timer import now_local
+from .Timer import now_local
 
 colorama.init()
 

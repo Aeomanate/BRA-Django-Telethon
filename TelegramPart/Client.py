@@ -8,9 +8,9 @@ from telethon import events
 from telethon.tl.custom import Button
 from telethon.tl.types import DocumentAttributeFilename
 
-from .ConfigApi import ConfigApi
+from ConfigApi import ConfigApi
 from Utils.DebugPrinter import DPrint
-from .Downloader import get_extension, FileDownloaderFromMessage, get_bare_filename
+from Downloader import get_extension, FileDownloaderFromMessage, get_bare_filename
 
 
 dprint = DPrint('BOT')

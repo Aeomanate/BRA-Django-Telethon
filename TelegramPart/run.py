@@ -1,7 +1,7 @@
 import asyncio
 import signal
 import contextlib
-from .Client import Logic
+from Client import Logic
 
 
 # pip install cryptg
